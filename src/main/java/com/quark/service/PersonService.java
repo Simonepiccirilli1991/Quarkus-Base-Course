@@ -1,8 +1,12 @@
 package com.quark.service;
 
 import com.quark.model.Person;
+import com.quark.repository.PersonRepo;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -10,20 +14,32 @@ import java.util.Optional;
 @ApplicationScoped
 public class PersonService {
 
-    private Map<String,Person> personList = new HashMap<>();
+    @Inject
+    PersonRepo personRepo;
+
+
     public String addPerson(Person person){
 
-        personList.put(person.getSurname(),person);
-        return "Added correctly";
+        try {
+            var entity = new Person();
+            entity.setName(person.getName());
+            entity.setSurname(person.getSurname());
+            entity.setNumber(person.getNumber());
+            entity.setCreationDate(LocalDateTime.now());
+
+            personRepo.persist(entity);
+            return "Added correctly";
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
     }
 
-    public Person getPerson(String surname){
-
-        var person = Optional.ofNullable(personList.get(surname));
-
-        if(person.isEmpty())
-            return new Person();
-        else
-            return person.get();
+    public Optional<Person> getPerson(String surname){
+       try{
+            var entity = personRepo.findBySurname(surname);
+            return entity;
+       }catch (Exception e){
+           throw new RuntimeException(e);
+       }
     }
 }
