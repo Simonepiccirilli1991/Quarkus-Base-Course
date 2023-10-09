@@ -13,4 +13,14 @@ public class PersonRepo implements PanacheRepositoryBase<Person, Long> {
         return Optional.ofNullable(find("surname",surname).firstResult());
     };
 
+    public void deleteBySurname(String surname){
+
+        var entity = findBySurname(surname);
+
+        if(entity.isEmpty())
+            throw new RuntimeException("Person not registered");
+
+        delete(entity.get());
+    }
+
 }
