@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @ApplicationScoped
+@Slf4j
 public class PersonService {
 
     @Inject
@@ -23,6 +24,7 @@ public class PersonService {
 
     public String addPerson(Person request){
 
+        log.info("AddPerson started with request: {}",request);
         try {
             var person = new Person();
             person.setName(request.getName());
@@ -31,22 +33,29 @@ public class PersonService {
             person.setCreationDate(LocalDateTime.now());
 
             personRepo.persist(person);
+            log.info("AddPerson ended successfully");
             return "Added correctly";
         }catch (Exception e){
+            log.error("Error on addPerson with err: {}",e);
             throw new RuntimeException(e);
         }
     }
 
     public Optional<Person> getPerson(String surname){
+        log.info("GetPerson starts with request: {}",surname);
        try{
             var entity = personRepo.findBySurname(surname);
+           log.info("GetPerson ended successfully");
             return entity;
        }catch (Exception e){
+           log.error("Error on  getPerson with err: {}",e);
            throw new RuntimeException(e);
        }
     }
 
     public String updatePerson(UpdatePersonRequest request){
+
+        log.info("UpdatePerson started with request: {}",request);
 
         if(StringUtil.isNullOrEmpty(request.surname()) || StringUtil.isNullOrEmpty(request.name())
         && StringUtil.isNullOrEmpty(request.number()))
@@ -65,14 +74,17 @@ public class PersonService {
 
             personRepo.persist(person.get());
         }catch (Exception e){
+            log.error("Error on updatePerson with err: {}",e);
             throw new RuntimeException(e);
         }
 
+        log.info("UpdatePerson ended successfully");
         return "Person updated successfully";
     }
 
     public String deletePerson(String surname){
 
+        log.info("DeletePerson started with request: {}",surname);
         try{
             var person = personRepo.findBySurname(surname);
 
@@ -81,8 +93,10 @@ public class PersonService {
 
             personRepo.delete(person.get());
 
+            log.info("DeletePerson ended successfully");
             return "Person deleted successfully";
         }catch (Exception e){
+            log.error("Error on updatePerson with err: {}",e);
             throw new RuntimeException(e);
         }
     }
