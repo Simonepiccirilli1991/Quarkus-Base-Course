@@ -1,5 +1,6 @@
 package com.quark.service;
 
+import com.quark.exception.PersonException;
 import com.quark.model.Person;
 import com.quark.model.request.AddPersonRequest;
 import com.quark.model.request.UpdatePersonRequest;
@@ -37,7 +38,7 @@ public class PersonService {
             return "Added correctly";
         }catch (Exception e){
             log.error("Error on addPerson with err: {}",e);
-            throw new RuntimeException(e);
+            throw new PersonException("Error on addPerson",e,null);
         }
     }
 
@@ -49,7 +50,7 @@ public class PersonService {
             return entity;
        }catch (Exception e){
            log.error("Error on  getPerson with err: {}",e);
-           throw new RuntimeException(e);
+           throw new PersonException("Error on getPerson",e,null);
        }
     }
 
@@ -75,7 +76,7 @@ public class PersonService {
             personRepo.persist(person.get());
         }catch (Exception e){
             log.error("Error on updatePerson with err: {}",e);
-            throw new RuntimeException(e);
+            throw new PersonException("Error on updatePerson",e,null);
         }
 
         log.info("UpdatePerson ended successfully");
@@ -96,8 +97,8 @@ public class PersonService {
             log.info("DeletePerson ended successfully");
             return "Person deleted successfully";
         }catch (Exception e){
-            log.error("Error on updatePerson with err: {}",e);
-            throw new RuntimeException(e);
+            log.error("Error on deletePerson with err: {}",e);
+            throw new PersonException("Error on deletePerson",e,null);
         }
     }
 }
